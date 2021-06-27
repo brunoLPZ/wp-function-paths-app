@@ -1,0 +1,23 @@
+.table-wrapper {
+  padding-top: 50px;
+}
+
+table {
+  width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  text-align: center;
+}
+
+.green-circle {
+  color: #66bb6a;
+}
+
+.gray-circle {
+  color: #bdbdbd;
+}
+
+.spinner {
+  display: inline-block;
+}

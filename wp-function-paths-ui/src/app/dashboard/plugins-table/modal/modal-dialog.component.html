@@ -1,0 +1,7 @@
+<div fxLayout="column" fxLayoutAlign="space-around">
+  <p class="modal-msg">{{data.message}}</p>
+  <div fxLayout="row" fxLayoutAlign="space-around">
+    <button mat-raised-button color="primary" (click)="onClose(true)">Confirm</button>
+    <button mat-raised-button color="warn" (click)="onClose(false)">Cancel</button>
+  </div>
+</div>

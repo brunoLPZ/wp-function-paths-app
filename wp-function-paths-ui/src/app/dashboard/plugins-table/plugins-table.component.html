@@ -1,0 +1,146 @@
+<div class="table-wrapper" fxLayout="column" fxLayoutAlign="space-around center">
+  <h1>WordPress Plugins</h1>
+
+  <mat-progress-spinner *ngIf="loading"
+                        mode="indeterminate" diameter="70">
+  </mat-progress-spinner>
+
+  <div fxLayout="row" fxFill fxLayoutAlign="space-around center" *ngIf="!loading">
+    <mat-form-field>
+      <mat-label>Plugin name</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Filter value" #input>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Downloaded</mat-label>
+      <mat-select (selectionChange)="applyColumnFilter('isDownloaded', $event)">
+        <mat-option value="none">None</mat-option>
+        <mat-option value="true">Yes</mat-option>
+        <mat-option value="false">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Scanned</mat-label>
+      <mat-select (selectionChange)="applyColumnFilter('isScanned', $event)">
+        <mat-option value="none">None</mat-option>
+        <mat-option value="true">Yes</mat-option>
+        <mat-option value="false">No</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Origin</mat-label>
+      <mat-select (selectionChange)="applyColumnFilter('isFromSvn', $event)">
+        <mat-option value="none">None</mat-option>
+        <mat-option value="true">WordPress SVN</mat-option>
+        <mat-option value="false">User upload</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <table *ngIf="!loading" mat-table [dataSource]="dataSource">
+
+    <!-- Slug Column -->
+    <ng-container matColumnDef="slug">
+      <th mat-header-cell *matHeaderCellDef> Plugin slug</th>
+      <td mat-cell *matCellDef="let element"> {{element.pluginSlug}} </td>
+
+      <td mat-footer-cell *matFooterCellDef colspan="7">
+        <input #zipInput hidden="true" type="file" onclick="this.value=null" (change)="zipInputChange($event)" accept=".zip"/>
+        <button mat-stroked-button color="primary" aria-label="Upload zip" (click)="zipInput.click()">
+          <mat-icon>file_upload</mat-icon> Upload zip
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Version Column -->
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef> Version</th>
+      <td mat-cell *matCellDef="let element"> {{element.version}} </td>
+      <td mat-footer-cell *matFooterCellDef>  </td>
+    </ng-container>
+
+    <!-- DownloadStatus Column -->
+    <ng-container matColumnDef="downloadStatus">
+      <th mat-header-cell *matHeaderCellDef>Download Status</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon [ngClass]="{'green-circle': element.isDownloaded, 'gray-circle': !element.isDownloaded}">
+          check_circle
+        </mat-icon>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>  </td>
+    </ng-container>
+
+    <!-- ScannedStatus Column -->
+    <ng-container matColumnDef="scannedStatus">
+      <th mat-header-cell *matHeaderCellDef>Scanned Status</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon [ngClass]="{'green-circle': element.isScanned, 'gray-circle': !element.isScanned}">
+          check_circle
+        </mat-icon>
+      </td>
+      <td mat-footer-cell *matFooterCellDef> </td>
+    </ng-container>
+
+    <!-- isFromSvn Column -->
+    <ng-container matColumnDef="isFromSvn">
+      <th mat-header-cell *matHeaderCellDef>Origin</th>
+      <td mat-cell *matCellDef="let element">
+        <mat-icon *ngIf="element.isFromSvn" color="primary">
+          cloud
+        </mat-icon>
+        <mat-icon *ngIf="!element.isFromSvn" color="primary">
+          computer
+        </mat-icon>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>  </td>
+    </ng-container>
+
+    <!-- Files Column -->
+    <ng-container matColumnDef="files">
+      <th mat-header-cell *matHeaderCellDef>Files</th>
+      <td mat-cell *matCellDef="let element">
+        {{element.files}}
+      </td>
+      <td mat-footer-cell *matFooterCellDef>  </td>
+    </ng-container>
+
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action</th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="!element.isDownloaded && !element.blocked" (click)="download(element)" mat-icon-button
+                color="primary" aria-label="Download">
+          <mat-icon>file_download</mat-icon>
+        </button>
+        <button *ngIf="element.isDownloaded && !element.isScanned && !element.blocked" (click)="scan(element)"
+                mat-icon-button color="primary"
+                aria-label="Scan">
+          <mat-icon>bug_report</mat-icon>
+        </button>
+        <button *ngIf="element.isScanned && !element.blocked" (click)="openNeo4j()" mat-icon-button color="primary"
+                aria-label="View">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button *ngIf="element.isDownloaded && !element.blocked" (click)="delete(element)" mat-icon-button
+                color="primary"
+                aria-label="View">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <mat-progress-spinner *ngIf="element.blocked" class="spinner"
+                              mode="indeterminate" diameter="20">
+        </mat-progress-spinner>
+      </td>
+      <td mat-footer-cell *matFooterCellDef>  </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="7">No data matching, please try with a different search</td>
+    </tr>
+
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[8]" showFirstLastButtons></mat-paginator>
+
+</div>

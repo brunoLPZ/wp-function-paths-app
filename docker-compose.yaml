@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+    neo4j:
+        build: wp-function-paths/neo4j
+        volumes:
+            - ./db/:/data
+        ports:
+            - 7474:7474
+            - 7687:7687
+    wp-function-paths-service:
+        build: ./wp-function-paths/.
+        volumes:
+            - ./plugins/:/usr/plugins/
+            - ./static-analyzer/:/opt/static-analyzer/
+        ports:
+            - 8070:8070
+        depends_on:
+          - neo4j
+    wp-function-paths-ui:
+        build: ./wp-function-paths-ui/.
+        ports:
+            - "80:80"
+        depends_on:
+            - wp-function-paths-service

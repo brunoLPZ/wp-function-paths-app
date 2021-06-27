@@ -1,0 +1,10 @@
+wp-function-paths/target
+*/.idea
+.idea
+
+wp-function-paths-ui/dist
+wp-function-paths-ui/node_modules
+wp-function-paths-ui/package-lock.json
+
+db
+plugins
