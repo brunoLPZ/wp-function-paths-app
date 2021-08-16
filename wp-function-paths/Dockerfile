@@ -23,10 +23,10 @@ RUN php composer.phar require nikic/php-parser
 RUN php composer.phar require ramsey/uuid
 
 COPY src/main/resources/entrypoint.sh .
-COPY src/main/resources/plugins-cron /etc/cron.d/plugins-cron
+#COPY src/main/resources/plugins-cron /etc/cron.d/plugins-cron
 
-RUN chmod 0644 /etc/cron.d/plugins-cron
-RUN crontab /etc/cron.d/plugins-cron
+#RUN chmod 0644 /etc/cron.d/plugins-cron
+#RUN crontab /etc/cron.d/plugins-cron
 
 COPY target/wp-function-paths-1.0-SNAPSHOT.jar .
 
