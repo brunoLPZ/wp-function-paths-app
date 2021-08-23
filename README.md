@@ -136,6 +136,25 @@ OPTIONAL MATCH sourceHooks=(hookSource)-[:TRIGGER]->(source)
 RETURN sourceHooks, definers, taintedPath
 ```
 
+## Usage
+
+To use this tool you'll need to install first `maven` and `docker`. Once you've both tools installed the 
+process to run `wp-function-paths` is the following:
+
+1. Go to `wp-function-paths` folder and run `mvn install` to generate the Java artifact.
+2. Go to the repo root folter and run `docker-compose up -d`. This could take some minutes while it 
+downloads all required dependencies and builds the docker images.
+
+Optional steps to setup a `WordPress` instalation locally to install and test plugins:
+1. Go to `wordpress` folder and run `docker-compose up -d`.
+
+Both `WordPress` and `wp-function-paths` docker containers share the same `plugins` directory. All
+uploaded plugins to `wp-function-paths` will be also available to install in `WordPress`.
+
+| :warning: WARNING          |
+|:---------------------------|
+| When uploading a new plugin to `wp-function-paths` ensure the source code is directly in the root of the ZIP file. If that's not the case you won't be able to install directly the `WordPress` plugin |
+
 # License
 
 Copyright 2021 Bruno López Trigo
