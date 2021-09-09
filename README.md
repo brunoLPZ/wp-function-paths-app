@@ -1,6 +1,10 @@
 # wp-function-paths-app
 Static code analyzer for WordPress plugins
 
+## Watch a demo
+
+📹 [Watch demo here!](https://odysee.com/wp-function-paths-demo:a)
+
 ## Motivation
 
 This tool is part of a challenge proposed by Telefónica. The goal of this tool is to
